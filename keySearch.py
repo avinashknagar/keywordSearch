@@ -8,16 +8,14 @@ def initInput():
     #print()
     return [myInput[0],myInput[1:]]
 
-def doColSearch(testFile,keyWords,colName):
-    
+def doColSearch(testFile,keyWords,colName):  
     pyPath, pyName = os.path.split(__file__)
     os.chdir(pyPath)    
     
     keyWords.append(colName)
-    
     try:
         df = pd.read_excel(testFile)
-        #print(testFile,df.shape)
+        df.columns = map(str.lower, df.columns)
     except : 
         return (['-1',"Error : Cannnot Open Input Excel file...."])
 
@@ -25,12 +23,12 @@ def doColSearch(testFile,keyWords,colName):
         found = []
         colList = df.columns.tolist()
         for i in keyWords:
-            if i in colList:
+            if str(i).lower() in list(map(str.lower,colList)):
                 found.append(i)
-        if len(found) == 0:       
+        if len(found) == 0:   
             return (['1',"Info : No Matching Columns found"]) 
         else:
-            return (['1',"Found Columns: "+"".join(map(str, found))])  
+            return (['1',"Found Columns: "+", ".join(map(str, found))])  
     except : 
         return (['-1',"Error : Failed to find the columns"])               
                 
@@ -41,10 +39,9 @@ def doContentSearch(testFile,keyWords,colName):
     os.chdir(pyPath)
     try:
         df = pd.read_excel(testFile)
-        #print(testFile,df.shape)
+        df.columns = map(str.lower, df.columns)
     except : 
         return (['-1',"Error : Cannnot Open Input Excel file...."])
-    dfOut = df[df[str(colName)].str.contains('tai',case=False)]
     try:
         writer = pd.ExcelWriter('output.xlsx', engine='openpyxl')
         
@@ -52,9 +49,8 @@ def doContentSearch(testFile,keyWords,colName):
         
         dummy = pd.DataFrame()
         dummy.to_excel(writer, sheet_name='Search Summary')
-        dfOut = df[df[str(colName)].str.contains('tati',case=False)]        
         for kw in keyWords:
-            dfOut = df[df[str(colName)].str.contains(kw,case=False)]
+            dfOut = df[df[str(colName).lower()].str.contains(kw,case=False)]
             tup = [kw,dfOut.shape[0]]
             #print(tup)
             shape.append(tup)
@@ -69,4 +65,6 @@ def doContentSearch(testFile,keyWords,colName):
     
 
 if __name__ == '__main__':
+    k = doContentSearch('C:/Users/avina/Documents/UpWork/keywordSearch/Program/Sample Data set.xls',['covid-19'],'opportunity')
+    print(k)
     print("Please run this app Using 'app.py'.....")   
