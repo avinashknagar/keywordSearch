@@ -2,7 +2,7 @@
 
 -- Please follow below steps to search several keywords in the Excel --
 
-1. Run Installer.bat to install python libraries. (Only for the first time)
+1. Run windowsInstaller.bat for windows and OSXInstaller.sh for Mac OS to install python libraries. (Only for the first time)
 2. Run app.py to open search application.
 
 -- End
