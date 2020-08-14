@@ -22,7 +22,7 @@ def mySubmit():
     with open(writepath, mode) as f:
         f.write("\nFile Name: " + str(fileName))
         f.write("\nColumn Name: " +  colName)
-        f.write("\nFile Name: " +  keyWordString)
+        f.write("\nKey-Words: " +  keyWordString)
         f.write("\n\n")
 
     Label(background='white').grid()
