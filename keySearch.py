@@ -31,7 +31,18 @@ def doColSearch(testFile,keyWords,colName):
             return (['1',"Found Columns: "+", ".join(map(str, found))])  
     except : 
         return (['-1',"Error : Failed to find the columns"])               
-                
+
+def SearchList(kwList,string):
+        k = [x for x in kwList if (x.lower() in string.lower())] 
+        s = ''
+        c = 1
+        for i in k:
+            if c == 1:
+                s=str(i)
+                c+=1
+            else:
+                s=s+", "+str(i)
+        return s        
 
 def doContentSearch(testFile,keyWords,colName):
         
@@ -49,6 +60,20 @@ def doContentSearch(testFile,keyWords,colName):
         
         dummy = pd.DataFrame()
         dummy.to_excel(writer, sheet_name='Search Summary')
+        
+        #Creating Master Sheet:
+        dfMaster = df
+        dfMaster['Master Search'] = df[str(colName).lower()].apply(lambda x: SearchList(keyWords,x))
+        dfMaster['len'] = df['Master Search'].apply(lambda x: len(x))
+        dfMaster['Number of Matches'] = df['Master Search'].apply(lambda x: 0 if len(x) == 0 else len(list(x.split(','))))
+        
+        dfMaster = dfMaster[dfMaster['len']>0]
+        colList = [c for c in dfMaster if c not in ['Master Search', 'Number of Matches']]
+        dfMaster = dfMaster[['Number of Matches','Master Search']+colList]
+        #print(dfMaster[['len','Number of Matches','Master Search']])
+        dfMaster.to_excel(writer, sheet_name='Master Sheet', index=False)
+  
+        #Rest of the Sheets
         for kw in keyWords:
             dfOut = df[df[str(colName).lower()].str.contains(kw,case=False)]
             tup = [kw,dfOut.shape[0]]
@@ -60,11 +85,11 @@ def doContentSearch(testFile,keyWords,colName):
         summ.sort_values(by='Frequency',ascending=False).to_excel(writer, sheet_name='Search Summary', index=False)
         writer.save()
         return(['1',"Success! output.xlsx created with search results.."])
-    except : 
-        return (['-1',"Error : Failed to create output file. Please check if the file is already opened."]) 
+    except Exception as e: 
+        return (['-1',"Error : Failed to create output file. Please check if the file is already opened :"+str(e)]) 
     
 
 if __name__ == '__main__':
-    k = doContentSearch('C:/Users/avina/Documents/UpWork/keywordSearch/Program/Sample Data set.xls',['covid-19'],'opportunity')
-    print(k)
+    #k = doContentSearch('C:/Users/avina/Documents/UpWork/keywordSearch/Program/Sample Data set.xls',['covid-19','looking to sell'],'opportunity')
+    #print(k)
     print("Please run this app Using 'app.py'.....")   
