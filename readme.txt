@@ -1,3 +1,4 @@
+** This is an Excel Scraper built Using Pandas and Tkinter.
 ** Requirements : Python 3, Internet connection for first run.
 
 -- Please follow below steps to search several keywords in the Excel --
