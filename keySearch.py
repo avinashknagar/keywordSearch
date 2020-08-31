@@ -33,16 +33,16 @@ def doColSearch(testFile,keyWords,colName):
         return (['-1',"Error : Failed to find the columns"])               
 
 def SearchList(kwList,string):
-        k = [x for x in kwList if (x.lower() in string.lower())] 
-        s = ''
-        c = 1
-        for i in k:
-            if c == 1:
-                s=str(i)
-                c+=1
-            else:
-                s=s+", "+str(i)
-        return s        
+    s = ''
+    for x in kwList:
+        xLen = len(x.split())
+        if xLen > 1:
+            if (x.lower() in string.lower()):
+                s = s+', '+str(x)
+        elif xLen == 1:
+            if (x.lower() in string.lower().split()):
+                s = s+', '+str(x)
+    return s[2:]        
 
 def doContentSearch(testFile,keyWords,colName):
         
@@ -75,11 +75,16 @@ def doContentSearch(testFile,keyWords,colName):
   
         #Rest of the Sheets
         for kw in keyWords:
-            dfOut = df[df[str(colName).lower()].str.contains(kw,case=False)]
+            if len(kw.split()) > 1:
+                dfOut = df[df[str(colName).lower()].str.contains(kw,case=False)]
+            else:
+                dfOut = df[df[str(colName).lower()].apply(lambda x: kw.lower() in x.lower().split())]
+                
             tup = [kw,dfOut.shape[0]]
             #print(tup)
             shape.append(tup)
-            dfOut.to_excel(writer, sheet_name=kw, index=False)
+            if tup[1]>0:
+                dfOut.to_excel(writer, sheet_name=kw, index=False)
             
         summ = pd.DataFrame(shape,columns = ['Key-Word','Frequency'])
         summ.sort_values(by='Frequency',ascending=False).to_excel(writer, sheet_name='Search Summary', index=False)
@@ -90,6 +95,7 @@ def doContentSearch(testFile,keyWords,colName):
     
 
 if __name__ == '__main__':
-    #k = doContentSearch('C:/Users/avina/Documents/UpWork/keywordSearch/Program/Sample Data set.xls',['covid-19','looking to sell'],'opportunity')
+    #k = doContentSearch('C:/Users/avina/Documents/UpWork/keywordSearch/keywordSearch-master/Sample Data set.xls',['slimshady', 'acquire', 'looking to sell'],'opportunity')
+    #k = SearchList(['covid-19','looking to sell', 'sign'], 'signed the deal looking to selL')
     #print(k)
     print("Please run this app Using 'app.py'.....")   

@@ -14,6 +14,7 @@ def mySubmit():
     fileName=dfPath
     keyWordString=str(t2.get("1.0",END)).rstrip()
     keyWords=list(str(t2.get("1.0",END)).rstrip().split(','))
+    keyWords=[str(x).strip() for x in keyWords]
     colName=str(t1.get("1.0",END)).rstrip()
     
     writepath = 'logSearch.log'
@@ -101,7 +102,7 @@ l1 = Label(root, text="Key-Words to search (Comma Separated):",background='white
 l1.grid(row=50, sticky=NW)
 
 #Text: Key-Words
-t2 = Text(root, height = 1, width = 50, bd=2, bg='#D4D6D2')
+t2 = Text(root, height = 8, width = 85, bd=2, bg='#D4D6D2')
 t2.grid(row=60, sticky=NW, columnspan=3)
 
 Label(root, text=" ",background='white').grid()
