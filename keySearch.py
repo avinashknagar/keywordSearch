@@ -55,9 +55,7 @@ def doContentSearch(testFile,keyWords,colName):
         return (['-1',"Error : Cannnot Open Input Excel file...."])
     try:
         writer = pd.ExcelWriter('output.xlsx', engine='openpyxl')
-        
-        shape = []
-        
+                
         dummy = pd.DataFrame()
         dummy.to_excel(writer, sheet_name='Search Summary')
         
@@ -70,8 +68,13 @@ def doContentSearch(testFile,keyWords,colName):
         dfMaster = dfMaster[dfMaster['len']>0]
         colList = [c for c in dfMaster if c not in ['Master Search', 'Number of Matches']]
         dfMaster = dfMaster[['Number of Matches','Master Search']+colList]
-        #print(dfMaster[['len','Number of Matches','Master Search']])
         dfMaster.to_excel(writer, sheet_name='Master Sheet', index=False)
+        
+        #Dict for all Sheets
+        myDict = {}
+        
+        #List for Home Sheet
+        shape = []
   
         #Rest of the Sheets
         for kw in keyWords:
@@ -81,13 +84,23 @@ def doContentSearch(testFile,keyWords,colName):
                 dfOut = df[df[str(colName).lower()].apply(lambda x: kw.lower() in x.lower().split())]
                 
             tup = [kw,dfOut.shape[0]]
-            #print(tup)
+            myDict[kw] = dfOut
             shape.append(tup)
-            if tup[1]>0:
-                dfOut.to_excel(writer, sheet_name=kw, index=False)
             
+
         summ = pd.DataFrame(shape,columns = ['Key-Word','Frequency'])
-        summ.sort_values(by='Frequency',ascending=False).to_excel(writer, sheet_name='Search Summary', index=False)
+        summ = summ.sort_values(by='Frequency',ascending=False)
+        summ.reset_index(drop=True, inplace=True)
+
+        #Print to Excel (Home Sheet)
+        summ.to_excel(writer, sheet_name='Search Summary', index=True)
+
+        #Print to Excel (Rest of the Sheets)        
+        for x in range(summ.shape[0]):
+            if summ['Frequency'][x] > 0:    
+                dfOut = myDict[str(summ['Key-Word'][x])]
+                dfOut.to_excel(writer, sheet_name=str(x), index=False)
+        
         writer.save()
         return(['1',"Success! output.xlsx created with search results.."])
     except Exception as e: 
@@ -95,7 +108,7 @@ def doContentSearch(testFile,keyWords,colName):
     
 
 if __name__ == '__main__':
-    #k = doContentSearch('C:/Users/avina/Documents/UpWork/keywordSearch/keywordSearch-master/Sample Data set.xls',['slimshady', 'acquire', 'looking to sell'],'opportunity')
+    #k = doContentSearch('C:/Users/avina/Documents/UpWork/keywordSearch/keywordSearch-master/Sample Data set.xls',['montreuxxx', 'acquire', '[EPA:DBG]', 'looking to sell', 'looking to buy'],'opportunity')
     #k = SearchList(['covid-19','looking to sell', 'sign'], 'signed the deal looking to selL')
     #print(k)
     print("Please run this app Using 'app.py'.....")   
