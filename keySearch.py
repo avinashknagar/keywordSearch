@@ -51,6 +51,7 @@ def doContentSearch(testFile,keyWords,colName):
     try:
         df = pd.read_excel(testFile)
         df.columns = map(str.lower, df.columns)
+        df = df[df[str(colName).lower()].notnull()]
     except : 
         return (['-1',"Error : Cannnot Open Input Excel file...."])
     try:
@@ -108,7 +109,7 @@ def doContentSearch(testFile,keyWords,colName):
     
 
 if __name__ == '__main__':
-    #k = doContentSearch('C:/Users/avina/Documents/UpWork/keywordSearch/keywordSearch-master/Sample Data set.xls',['montreuxxx', 'acquire', '[EPA:DBG]', 'looking to sell', 'looking to buy'],'opportunity')
+    #k = doContentSearch('C:/Users/avina/Documents/UpWork/keywordSearch/keywordSearch-master/DEALS.xls',['gosh!','future', 'looking to buy'],'target')
     #k = SearchList(['covid-19','looking to sell', 'sign'], 'signed the deal looking to selL')
     #print(k)
     print("Please run this app Using 'app.py'.....")   
