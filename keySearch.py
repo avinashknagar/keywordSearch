@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import re
 
 def initInput():
     file = open('input.txt','r')     
@@ -80,7 +81,7 @@ def doContentSearch(testFile,keyWords,colName):
         #Rest of the Sheets
         for kw in keyWords:
             if len(kw.split()) > 1:
-                dfOut = df[df[str(colName).lower()].str.contains(kw,case=False)]
+                dfOut = df[df[str(colName).lower()].str.contains(re.escape(kw),case=False)]
             else:
                 dfOut = df[df[str(colName).lower()].apply(lambda x: kw.lower() in x.lower().split())]
                 
